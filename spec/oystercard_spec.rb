@@ -17,5 +17,8 @@ describe Oystercard do
     it 'expects an argument, the amount to add to balance' do
       expect(subject).to respond_to(:topup).with(1).argument
     end
+    it 'returns a new value of balance with the amount added' do
+      expect { subject.topup(5) }.to change { subject.balance }.by(5)
+    end
   end
 end
