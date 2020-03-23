@@ -24,4 +24,10 @@ describe Oystercard do
       expect {subject.topup(described_class::MAXIMUM_BALANCE + 1) }.to raise_error "Maximum balance £#{described_class::MAXIMUM_BALANCE}"
     end
   end
+
+  context '#deduct' do
+    it 'responds to #deduct' do
+      expect(subject).to respond_to :deduct
+    end
+  end
 end
