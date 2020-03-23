@@ -1,8 +1,10 @@
 require 'oystercard'
 
 describe Oystercard do
-    it 'checks new card has balance zero' do
-        expect(subject).to respond_to :balance
-    end
-  
+  it 'responds to #balance' do
+    expect(subject).to respond_to :balance
+  end
+  it 'a newly created card has a balance of 0' do
+    expect(subject.balance).to be 0
+  end
 end
