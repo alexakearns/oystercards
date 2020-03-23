@@ -29,5 +29,11 @@ describe Oystercard do
     it 'responds to #deduct' do
       expect(subject).to respond_to :deduct
     end
+    it 'takes one argument, the fare to deduct' do
+      expect(subject).to respond_to(:deduct).with(1).argument
+    end
+    it 'returns a new value of balance with the fare deducted' do
+      expect { subject.deduct(5) }.to change { subject.balance }.by(-5)
+    end
   end
 end
