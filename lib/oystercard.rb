@@ -14,15 +14,18 @@ class Oystercard
   end
 
   def deduct(fare)
-    fail "Insufficient balance, your balance is £#{@balance}" if insufficient_funds?(fare)
+#    fail "Insufficient balance, your balance is £#{@balance}" if insufficient_funds?(fare)
     @balance -= fare
   end
 
-  def insufficient_funds?(amount)
-    balance - amount.negative?
-  end
+#  def insufficient_funds?(amount)
+#    balance - amount.negative?
+#  end
 
   def exceed_max?(amount)
     @balance + amount > MAXIMUM_BALANCE
+  end
+
+  def touch_in
   end
 end
