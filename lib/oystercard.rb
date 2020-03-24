@@ -28,4 +28,7 @@ class Oystercard
 
   def touch_in
   end
+
+  def touch_out
+  end
 end
