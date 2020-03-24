@@ -65,7 +65,9 @@ describe Oystercard do
       expect(subject).to respond_to :in_journey?
     end
 
-    context 'adds 10 to balance and touches in'
+    context 'adds 10 to balance and touches in' do
+      
+    end
       before do
         subject.topup(10)
         subject.touch_in
