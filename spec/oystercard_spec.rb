@@ -26,25 +26,11 @@ describe Oystercard do
 
   end
 
-  context '#deduct' do
-    it 'responds to #deduct' do
-      expect(subject).to respond_to :deduct
-    end
-    it 'takes one argument, the fare to deduct' do
-      expect(subject).to respond_to(:deduct).with(1).argument
-    end
-
-    context 'card has maximum balance' do
-      before do
-        subject.topup(Oystercard::MAXIMUM_BALANCE)
-      end
-        it 'returns a new value of balance with the fare deducted' do
-          expect { subject.deduct(5) }.to change { subject.balance }.by (-5) 
-        end
-        it 'restricts topup so max balance is £90' do
-          expect { subject.topup(1) }.to raise_error "Maximum balance £#{Oystercard::MAXIMUM_BALANCE}"
-        end
-
+  context 'testing max and min limits of card' do
+   
+    it 'card has maximum balance and raises error if exceeded' do
+      subject.topup(Oystercard::MAXIMUM_BALANCE)
+      expect { subject.topup(1) }.to raise_error "Maximum balance £#{Oystercard::MAXIMUM_BALANCE}"
     end
 
     it 'will raise an error if there is not enough balance on the card' do
@@ -67,7 +53,6 @@ describe Oystercard do
 
     context 'adds 10 to balance and touches in' do
       
-    end
       before do
         subject.topup(10)
         subject.touch_in
@@ -79,6 +64,9 @@ describe Oystercard do
         it 'it checks if the card not in use after user touched out' do
           subject.touch_out
           expect(subject).not_to be_in_journey
+        end
+        it 'when use touches out, the correct amount is deducted from the balance' do
+          expect { subject.touch_out }.to change { subject.balance }.by -(Oystercard::MINIMUM_FARE)
         end
     end
   end 
