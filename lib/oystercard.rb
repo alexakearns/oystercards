@@ -1,6 +1,8 @@
+
 class Oystercard
   STARTING_BALANCE = 0
   MAXIMUM_BALANCE = 90
+  MINIMUM_BALANCE = 1
 
   def initialize
     @balance = STARTING_BALANCE
@@ -11,6 +13,7 @@ class Oystercard
 
   def topup(amount)
     fail "Maximum balance £#{MAXIMUM_BALANCE}" if exceed_max?(amount)
+
     @balance += amount
   end
 
@@ -19,15 +22,13 @@ class Oystercard
     @balance -= fare
   end
 
-#  def insufficient_funds?(amount)
-#    balance - amount.negative?
-#  end
-
   def exceed_max?(amount)
     @balance + amount > MAXIMUM_BALANCE
   end
 
   def touch_in
+    fail "Below minimum balance of £#{MINIMUM_BALANCE}" if @balance < 1
+
     @in_use = true
   end
 

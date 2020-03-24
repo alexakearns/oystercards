@@ -38,17 +38,18 @@ describe Oystercard do
       before do
         subject.topup(Oystercard::MAXIMUM_BALANCE)
       end
-      it 'returns a new value of balance with the fare deducted' do
-        expect { subject.deduct(5) }.to change { subject.balance }.by -5 
-      end
-      it 'restricts topup so max balance is £90' do
-        expect {subject.topup(1) }.to raise_error "Maximum balance £#{Oystercard::MAXIMUM_BALANCE}"
-      end
+        it 'returns a new value of balance with the fare deducted' do
+          expect { subject.deduct(5) }.to change { subject.balance }.by (-5) 
+        end
+        it 'restricts topup so max balance is £90' do
+          expect { subject.topup(1) }.to raise_error "Maximum balance £#{Oystercard::MAXIMUM_BALANCE}"
+        end
 
     end
-#    it 'will raise an error if there is not enough balance on the card' do
-#      expect { subject.deduct(5) }.to raise_error 'Insufficient balance, your balance is £0'
-#    end
+
+    it 'will raise an error if there is not enough balance on the card' do
+      expect { subject.touch_in }.to raise_error "Below minimum balance of £#{Oystercard::MINIMUM_BALANCE}"
+    end
     
   end
 
@@ -64,18 +65,20 @@ describe Oystercard do
       expect(subject).to respond_to :in_journey?
     end
 
-    it 'it checks if the card in use after user touched in' do
-      subject.touch_in
-      expect(subject).to be_in_journey
+    context 'adds 10 to balance and touches in'
+      before do
+        subject.topup(10)
+        subject.touch_in
+      end 
+
+        it 'it checks if the card in use after user touched in' do
+          expect(subject).to be_in_journey
+        end
+        it 'it checks if the card not in use after user touched out' do
+          subject.touch_out
+          expect(subject).not_to be_in_journey
+        end
     end
-    it 'it checks if the card not in use after user touched out' do
-      subject.touch_in 
-      subject.touch_out
-      expect(subject).not_to be_in_journey
-    end
-
-  end
-
-
-
+  end 
 end
+
