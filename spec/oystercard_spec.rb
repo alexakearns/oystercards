@@ -23,9 +23,7 @@ describe Oystercard do
     it 'returns a new value of balance with the amount added' do
       expect { subject.topup(5) }.to change { subject.balance }.by(5)
     end
-    it 'restricts topup so max balance is £90' do
-      expect {subject.topup(described_class::MAXIMUM_BALANCE + 1) }.to raise_error "Maximum balance £#{described_class::MAXIMUM_BALANCE}"
-    end
+
   end
 
   context '#deduct' do
@@ -35,12 +33,23 @@ describe Oystercard do
     it 'takes one argument, the fare to deduct' do
       expect(subject).to respond_to(:deduct).with(1).argument
     end
-    it 'returns a new value of balance with the fare deducted' do
-      expect { subject.deduct(5) }.to change { subject.balance }.by -5 
+
+    context 'card has maximum balance' do
+      before do
+        subject.topup(Oystercard::MAXIMUM_BALANCE)
+      end
+      it 'returns a new value of balance with the fare deducted' do
+        expect { subject.deduct(5) }.to change { subject.balance }.by -5 
+      end
+      it 'restricts topup so max balance is £90' do
+        expect {subject.topup(1) }.to raise_error "Maximum balance £#{Oystercard::MAXIMUM_BALANCE}"
+      end
+
     end
 #    it 'will raise an error if there is not enough balance on the card' do
 #      expect { subject.deduct(5) }.to raise_error 'Insufficient balance, your balance is £0'
 #    end
+    
   end
 
   context '#in_journey' do
