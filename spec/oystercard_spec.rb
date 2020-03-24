@@ -54,8 +54,17 @@ describe Oystercard do
     it 'responds to in_journey?' do
       expect(subject).to respond_to :in_journey?
     end
-  
-  
+
+    it 'it checks if the card in use after user touched in' do
+      subject.touch_in
+      expect(subject).to be_in_journey
+    end
+    it 'it checks if the card not in use after user touched out' do
+      subject.touch_in 
+      subject.touch_out
+      expect(subject).not_to be_in_journey
+    end
+
   end
 
 
