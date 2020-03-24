@@ -31,4 +31,7 @@ class Oystercard
 
   def touch_out
   end
+
+  def in_journey?
+  end
 end

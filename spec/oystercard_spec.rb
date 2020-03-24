@@ -50,6 +50,12 @@ describe Oystercard do
     it 'responds to touch_out' do
       expect(subject).to respond_to :touch_out
     end
+
+    it 'responds to in_journey?' do
+      expect(subject).to respond_to :in_journey?
+    end
+  
+  
   end
 
 
