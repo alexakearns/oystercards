@@ -2,8 +2,8 @@ require 'oystercard'
 
 describe Oystercard do
 
-#  let(:card_tenner) { Oystercard.new.topup(10) }
-  let(:entry_station) { double :station, :touch_in => 'Entered Bow'}
+  let(:entry_station) { double :station }
+  let(:exit_station) { double :station }
 
   context '#balance' do
     it 'responds to #balance' do
@@ -63,19 +63,28 @@ describe Oystercard do
           expect(subject).to be_in_journey
         end
         it 'it checks if the card not in use after user touched out' do
-          subject.touch_out
+          subject.touch_out(exit_station)
           expect(subject).not_to be_in_journey
         end
         it 'when use touches out, the correct amount is deducted from the balance' do
-          expect { subject.touch_out }.to change { subject.balance }.by -(Oystercard::MINIMUM_FARE)
+          expect { subject.touch_out(exit_station) }.to change { subject.balance }.by -(Oystercard::MINIMUM_FARE)
         end
         it 'records station entered at touch_in' do
           expect(subject.entry_station).to eq entry_station
         end
     
         it 'entry station returns to nil when #touch_out' do
-         subject.touch_out
+         subject.touch_out(exit_station)
          expect(subject.entry_station).to eq nil
+        end
+
+        it 'recalls exit station at touch_out' do
+          expect(subject.touch_out(exit_station)).to eq exit_station
+        end
+    
+        it 'recalls journey after journey completed' do
+          subject.touch_out(exit_station)
+          expect(subject.journeys).to include ({entry: entry_station, exit: exit_station })
         end
     end
   end 
@@ -87,6 +96,10 @@ describe Oystercard do
       expect(subject.touch_in(entry_station)).to eq entry_station
     end
 
+    it 'checks that the card has an empty list of journeys by default' do
+      expect(subject.journeys).to eq []
+    end
+ 
   end
 
 end
