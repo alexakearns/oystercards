@@ -3,6 +3,7 @@ require 'oystercard'
 describe Oystercard do
 
 #  let(:card_tenner) { Oystercard.new.topup(10) }
+  let(:entry_station) { double :station, :touch_in => 'Entered Bow'}
 
   context '#balance' do
     it 'responds to #balance' do
@@ -34,7 +35,7 @@ describe Oystercard do
     end
 
     it 'will raise an error if there is not enough balance on the card' do
-      expect { subject.touch_in }.to raise_error "Below minimum balance of £#{Oystercard::MINIMUM_BALANCE}"
+      expect { subject.touch_in(entry_station) }.to raise_error "Below minimum balance of £#{Oystercard::MINIMUM_BALANCE}"
     end
     
   end
@@ -55,7 +56,7 @@ describe Oystercard do
       
       before do
         subject.topup(10)
-        subject.touch_in
+        subject.touch_in(entry_station)
       end 
 
         it 'it checks if the card in use after user touched in' do
@@ -68,7 +69,25 @@ describe Oystercard do
         it 'when use touches out, the correct amount is deducted from the balance' do
           expect { subject.touch_out }.to change { subject.balance }.by -(Oystercard::MINIMUM_FARE)
         end
+        it 'records station entered at touch_in' do
+          expect(subject.entry_station).to eq entry_station
+        end
+    
+        it 'entry station returns to nil when #touch_out' do
+         subject.touch_out
+         expect(subject.entry_station).to eq nil
+        end
     end
   end 
+
+  context 'stations' do
+
+    it 'recalls entry station at touch_in' do
+      subject.topup(10)
+      expect(subject.touch_in(entry_station)).to eq entry_station
+    end
+
+  end
+
 end
 
