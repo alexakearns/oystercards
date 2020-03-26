@@ -5,8 +5,8 @@ class Journey
 
 
 
-  def initialize(entry_station = nil)
-    @entry_station = entry_station
+  def initialize(initial_station = nil)
+    @initial_station = initial_station
     @exit_station = nil
 
   end
@@ -16,5 +16,13 @@ class Journey
   end
 
 
-  attr_reader :exit_station, :entry_station
+  attr_reader :exit_station, :initial_station
+
+  def valid_journey?
+    [@initial_station, @exit_station].include?(nil)
+  end
+
+  def fare
+    valid_journey? ? 6 : 1
+  end
 end

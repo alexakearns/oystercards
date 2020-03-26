@@ -3,7 +3,7 @@ require 'oystercard'
 describe Oystercard do
 
   let(:entry_station) { double :station }
-  let(:exit_station) { double :station }
+  let(:final_station) { double :station }
 
   context '#balance' do
     it 'responds to #balance' do
@@ -63,33 +63,34 @@ describe Oystercard do
           expect(subject).to be_in_journey
         end
         it 'it checks if the card not in use after user touched out' do
-          subject.touch_out(exit_station)
+          subject.touch_out(final_station)
           expect(subject).not_to be_in_journey
         end
         it 'when use touches out, the correct amount is deducted from the balance' do
-          expect { subject.touch_out(exit_station) }.to change { subject.balance }.by -(Oystercard::MINIMUM_FARE)
+          expect { subject.touch_out(final_station) }.to change { subject.balance }.by -(Oystercard::MINIMUM_FARE)
         end
         it 'records station entered at touch_in' do
           expect(subject.entry_station).to eq entry_station
         end
 
         it 'entry station returns to nil when #touch_out' do
-         subject.touch_out(exit_station)
+         subject.touch_out(final_station)
          expect(subject.entry_station).to eq nil
         end
 
         it 'recalls exit station at touch_out' do
-          expect(subject.touch_out(exit_station)).to eq exit_station
+          expect(subject.touch_out(final_station)).to eq final_station
         end
 
         it 'recalls journey start after journey completed' do
-          subject.touch_out(exit_station)
-          expect(subject.journeys[-1].entry_station).to eq(entry_station)
+          subject.touch_out(final_station)
+          expect(subject.journeys[-1].initial_station).to eq(entry_station)
         end
 
         it 'recalls journey finish after journey completed' do
-          subject.touch_out(exit_station)
-          expect(subject.journeys[-1].exit_station).to eq(exit_station)
+
+          subject.touch_out(final_station)
+          expect(subject.journeys[-1].exit_station).to eq(final_station)
         end
     end
   end
@@ -111,7 +112,7 @@ describe Oystercard do
     it "after touching in the journey has the entry station stored in it." do
       subject.topup(5)
       subject.touch_in('bank')
-      expect(subject.journey.entry_station).to eq('bank')
+      expect(subject.journey.initial_station).to eq('bank')
     end
     it 'after touching out the journey is equal to nil' do
       subject.topup(5)

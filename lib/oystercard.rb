@@ -28,7 +28,7 @@ class Oystercard
 
   def touch_in(station)
     fail "Below minimum balance of £#{MINIMUM_BALANCE}" if @balance < MINIMUM_BALANCE
-    @journey = Journey.new(entry_station: station)
+    @journey = Journey.new(station)
     @entry_station = station
   end
 
@@ -49,7 +49,6 @@ class Oystercard
   private
 
   def deduct
-    @journey.valid_journey?
-    @balance -= MINIMUM_FARE
+    @balance -= @journey.fare
   end
 end
