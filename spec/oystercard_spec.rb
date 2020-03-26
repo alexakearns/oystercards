@@ -69,17 +69,10 @@ describe Oystercard do
         it 'when use touches out, the correct amount is deducted from the balance' do
           expect { subject.touch_out(final_station) }.to change { subject.balance }.by -(Oystercard::MINIMUM_FARE)
         end
-        it 'records station entered at touch_in' do
-          expect(subject.entry_station).to eq entry_station
-        end
 
         it 'entry station returns to nil when #touch_out' do
          subject.touch_out(final_station)
-         expect(subject.entry_station).to eq nil
-        end
-
-        it 'recalls exit station at touch_out' do
-          expect(subject.touch_out(final_station)).to eq final_station
+         expect(subject.journey).to eq nil
         end
 
         it 'recalls journey start after journey completed' do
@@ -96,11 +89,6 @@ describe Oystercard do
   end
 
   context 'stations' do
-
-    it 'recalls entry station at touch_in' do
-      subject.topup(10)
-      expect(subject.touch_in(entry_station)).to eq entry_station
-    end
 
     it 'checks that the card has an empty list of journeys by default' do
       expect(subject.journeys).to eq []
@@ -126,6 +114,20 @@ describe Oystercard do
       c.touch_in('bank')
       c.touch_out('hammersmith')
       expect(c.journeys[-1].exit_station).to eq('hammersmith')
+    end
+  end
+
+  context 'fare dodgers' do
+    it 'should charge you the max fare if you touch in twice in a row' do
+      c = Oystercard.new
+      c.topup(5)
+      c.touch_in('bank')
+      expect { c.touch_in('hub') }.to change { c.balance }.by(-Oystercard::MAXIMUM_FARE)
+    end
+    it 'should charge you the max fare if you touch out without touching in'do
+      c = Oystercard.new
+      c.topup(5)
+      expect { c.touch_out('buh')}.to change { c.balance }.by(-Oystercard::MAXIMUM_FARE)
     end
   end
 
