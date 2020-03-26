@@ -5,16 +5,16 @@ class Journey
 
 
 
-  def initialize(entry_station:)
+  def initialize(entry_station = nil)
     @entry_station = entry_station
-    @exit_station = ""
+    @exit_station = nil
 
   end
 
-  attr_accessor :entry_station 
-
-  def exit_station
-    oystercard.exit_station
+  def end_journey(final)
+    @exit_station = final
   end
 
+
+  attr_reader :exit_station, :entry_station
 end

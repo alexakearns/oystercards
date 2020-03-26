@@ -28,7 +28,7 @@ describe Oystercard do
   end
 
   context 'testing max and min limits of card' do
-   
+
     it 'card has maximum balance and raises error if exceeded' do
       subject.topup(Oystercard::MAXIMUM_BALANCE)
       expect { subject.topup(1) }.to raise_error "Maximum balance £#{Oystercard::MAXIMUM_BALANCE}"
@@ -37,7 +37,7 @@ describe Oystercard do
     it 'will raise an error if there is not enough balance on the card' do
       expect { subject.touch_in(entry_station) }.to raise_error "Below minimum balance of £#{Oystercard::MINIMUM_BALANCE}"
     end
-    
+
   end
 
   context '#in_journey' do
@@ -53,11 +53,11 @@ describe Oystercard do
     end
 
     context 'adds 10 to balance and touches in' do
-      
+
       before do
         subject.topup(10)
         subject.touch_in(entry_station)
-      end 
+      end
 
         it 'it checks if the card in use after user touched in' do
           expect(subject).to be_in_journey
@@ -72,7 +72,7 @@ describe Oystercard do
         it 'records station entered at touch_in' do
           expect(subject.entry_station).to eq entry_station
         end
-    
+
         it 'entry station returns to nil when #touch_out' do
          subject.touch_out(exit_station)
          expect(subject.entry_station).to eq nil
@@ -81,13 +81,18 @@ describe Oystercard do
         it 'recalls exit station at touch_out' do
           expect(subject.touch_out(exit_station)).to eq exit_station
         end
-    
-        it 'recalls journey after journey completed' do
+
+        it 'recalls journey start after journey completed' do
           subject.touch_out(exit_station)
-          expect(subject.journeys).to include ({entry: entry_station, exit: exit_station })
+          expect(subject.journeys[-1].entry_station).to eq(entry_station)
+        end
+
+        it 'recalls journey finish after journey completed' do
+          subject.touch_out(exit_station)
+          expect(subject.journeys[-1].exit_station).to eq(exit_station)
         end
     end
-  end 
+  end
 
   context 'stations' do
 
@@ -99,8 +104,28 @@ describe Oystercard do
     it 'checks that the card has an empty list of journeys by default' do
       expect(subject.journeys).to eq []
     end
- 
+
+  end
+
+  context 'journey class connectivity' do
+    it "after touching in the journey has the entry station stored in it." do
+      subject.topup(5)
+      subject.touch_in('bank')
+      expect(subject.journey.entry_station).to eq('bank')
+    end
+    it 'after touching out the journey is equal to nil' do
+      subject.topup(5)
+      subject.touch_in('bank')
+      subject.touch_out('hammersmith')
+      expect(subject.journey).to eq nil
+    end
+    it 'should store the exit station upon touching out' do
+      c = Oystercard.new
+      c.topup(5)
+      c.touch_in('bank')
+      c.touch_out('hammersmith')
+      expect(c.journeys[-1].exit_station).to eq('hammersmith')
+    end
   end
 
 end
-
